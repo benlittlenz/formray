@@ -13,7 +13,7 @@ import {
   TextAreaField,
   SelectField,
 } from "../../components/Fields";
-import { SelectMulti, SelectOne, Heading1Icon } from "./Icons";
+import { SelectMulti, SelectOne, Heading1Icon, Heading2Icon, Heading3Icon } from "./Icons";
 
 const icons = {
   name: <UserIcon className="h-6 w-6 text-gray-600" />,
@@ -70,12 +70,27 @@ export function Builder() {
       <div className="hidden md:flex md:flex-shrink-0">
         <div className="flex flex-col w-96">
           <div className="flex flex-col flex-grow pt-5 overflow-y-auto  bg-white border-r border-gray-100 shadow-sm">
-            <div className="flex justify-center h-20 w-20 hover:bg-gray-100 text-center">
-              <div className="m-auto">
-                <Heading1Icon />
-                <p className="text-sm">Heading 1</p>
+            <div className="flex items-center px-4">
+              <div className="flex justify-center h-20 w-20 hover:bg-gray-100 text-center">
+                <div className="m-auto">
+                  <Heading1Icon />
+                  <p className="text-sm">Heading 1</p>
+                </div>
+              </div>
+              <div className="flex justify-center h-20 w-20 hover:bg-gray-100 text-center">
+                <div className="m-auto">
+                  <Heading2Icon />
+                  <p className="text-sm">Heading 2</p>
+                </div>
+              </div>
+              <div className="flex justify-center h-20 w-20 hover:bg-gray-100 text-center">
+                <div className="m-auto">
+                  <Heading3Icon />
+                  <p className="text-sm">Heading 3</p>
+                </div>
               </div>
             </div>
+
             <div>
               <h4 className="px-4 py-2 text-sm font-normal text-gray-500">
                 Input
