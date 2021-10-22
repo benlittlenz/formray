@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   AtSymbolIcon,
   UserIcon,
@@ -27,58 +28,41 @@ const icons = {
   email: <AtSymbolIcon className="h-6 w-6 text-gray-600" />,
 };
 
-// const initialState = [
-//   {
-//     component: "page",
-//     label: "Page 1",
-//     id: "0c946643-5a83-4545-baea-055b27b51e8a",
-//     fields: [],
-//   },
-// ];
 const initialState = {
   component: "page",
   label: "Page 1",
-  id: "0c946643-5a83-4545-baea-055b27b51e8a",
-  fields: [
-    {
-      text_area: {
-        type: "textarea",
-        id: uuidv4(),
-        component: "text_area",
-        label: "",
-        hint: "",
-        placeholder: "",
-      },
-    },
-  ],
+  id: uuidv4(),
+  fields: [],
 };
-
 
 const fieldComponentLookup = {
-  short_text: <InputField />,
+  short_text: <InputField label="Short Text" />,
+  text_area: <TextAreaField label="Text Area" />,
 };
 
-const formTypeLookup = {
-  short_text: {
-    type: "text",
-    id: uuidv4(),
-    component: "short_text",
-    label: "",
-    hint: "",
-    placeholder: "",
-  },
-  text_area: {
-    type: "textarea",
-    id: uuidv4(),
-    component: "text_area",
-    label: "",
-    hint: "",
-    placeholder: "",
-  },
-};
+
 
 export function Builder() {
   const [formState, setFormState] = useState(initialState);
+
+  const formTypeLookup = {
+    short_text: {
+      type: "text",
+      id: uuidv4(),
+      component: "short_text",
+      label: "Short Text",
+      hint: "",
+      placeholder: "",
+    },
+    text_area: {
+      type: "textarea",
+      id: uuidv4(),
+      component: "text_area",
+      label: "",
+      hint: "",
+      placeholder: "",
+    },
+  };
 
   const updateState = () => {
     setFormState((prevState) => {
@@ -91,32 +75,24 @@ export function Builder() {
   };
 
   const createElement = (element) => {
-    console.log("initialState", initialState);
+    console.log("element", element);
     setFormState((prevState) => {
       return {
         ...prevState,
-        fields: [...prevState.fields, formTypeLookup["short_text"]],
+        fields: [...prevState.fields, formTypeLookup[element]],
       };
-    })
-    // const newArr = {
-    //   ...initialState,
-    //   fields: [...initialState.fields, formTypeLookup["short_text"]],
-    // };
-    // console.log("newArr", newArr);
-    // setFormState((prevState) => {
-    //   return {
-    //     ...prevState[0],
-    //   }
-    //   // let current = {
-    //   //   ...prevState,
-    //   // };
-    //   //   current[0].fields.push(formTypeLookup["short_text"])
-
-    //   //   return current
-    //   // current.prevState[0].fields.push(formTypeLookup["short_text"]);
-    //   // console.log("CURRENT", current);
-    // });
+    });
   };
+
+  const handleDragEnd = (result) => {
+    console.log("RESULT", result)
+    const items = {...formState}
+    const [reorderedItem] = items.fields.splice(result.source.index, 1)
+    items.fields.splice(result.destination.index, 0, reorderedItem)
+
+    setFormState(items)
+    // const reorderItem = items.splice()
+  }
   console.log("formState", formState);
   return (
     <div className="flex h-screen overflow-hidden bg-white rounded-md">
@@ -210,10 +186,10 @@ export function Builder() {
                   <button
                     type="button"
                     className="m-auto"
-                    onClick={() => createElement("long_text")}
+                    onClick={() => createElement("text_area")}
                   >
                     <MenuAlt2Icon className="mx-auto h-6 w-6 text-gray-600" />
-                    <p className="text-sm">Long Text</p>
+                    <p className="text-sm">Text Area</p>
                   </button>
                 </div>
               </div>
@@ -265,26 +241,52 @@ export function Builder() {
           </div>
         </div>
       </div>
-      <ul>
-        {formState.fields.map((field) => {
-          return (
-            <li key={field.id}>{fieldComponentLookup[field.component]}</li>
-          );
-        })}{" "}
-      </ul>
+      <div className="w-1/2 mx-auto ">
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="fields">
+            {(provided) => (
+              <ul
+                className="w-full"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {formState.fields.map((field, index) => {
+                  return (
+                    <Draggable
+                      key={field.id}
+                      draggableId={field.id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <li
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          {fieldComponentLookup[field.component]}
+                        </li>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
     </div>
   );
 }
 
-// <div>
-//   <button onClick={updateState}>Update</button>
-//   <div className="bg-red-500 h-6 w-6"></div>
-//   <ul>
-//   {formState[0].fields.map((field) => {
-//     return (
-//         <li key={field.id}>{fieldComponentLookup[field.component]}</li>
-//     );
-//     // console.log('FIELD', field)
-//   })}
-//   </ul>
-// </div>
+const Item = ({ field }) => {
+  console.log("FIELD", field);
+  return (
+    <Draggable draggableId={field.id} index={field.id}>
+      {(provided) => {
+        console.log("PROVIDED", provided);
+        return <li key={field.id}>{fieldComponentLookup[field.component]}</li>;
+      }}
+    </Draggable>
+  );
+};
