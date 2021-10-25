@@ -22,7 +22,7 @@ export const FieldWrapper = (props: FieldWrapperProps) => {
   const { label, className, error, children } = props;
   return (
     <div
-      className="flex items-center my-4 py-4 px-4 hover:bg-gray-50"
+      className="flex items-center py-4 px-4 hover:bg-gray-50"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

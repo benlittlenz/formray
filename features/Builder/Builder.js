@@ -13,6 +13,7 @@ import {
   InputField,
   TextAreaField,
   SelectField,
+  EmailField
 } from "../../components/Fields";
 import {
   SelectMulti,
@@ -38,10 +39,9 @@ const initialState = {
 const fieldComponentLookup = {
   short_text: <InputField label="Short Text" />,
   text_area: <TextAreaField label="Text Area" />,
-  select: <SelectField label="Select Field" options={[{label: 'Option A', value: 'Option A'}]} />
+  select: <SelectField label="Select Field" options={[{label: 'Option A', value: 'Option A'}]} />,
+  email: <EmailField label="Email" />
 };
-
-
 
 export function Builder() {
   const [formState, setFormState] = useState(initialState);
@@ -67,6 +67,14 @@ export function Builder() {
       type: "select",
       id: uuidv4(),
       component: "select",
+      label: "",
+      hint: "",
+      placeholder: "",
+    },
+    email: {
+      type: "email",
+      id: uuidv4(),
+      component: "email",
       label: "",
       hint: "",
       placeholder: "",
