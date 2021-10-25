@@ -38,6 +38,7 @@ const initialState = {
 const fieldComponentLookup = {
   short_text: <InputField label="Short Text" />,
   text_area: <TextAreaField label="Text Area" />,
+  select: <SelectField label="Select Field" options={[{label: 'Option A', value: 'Option A'}]} />
 };
 
 
@@ -62,16 +63,14 @@ export function Builder() {
       hint: "",
       placeholder: "",
     },
-  };
-
-  const updateState = () => {
-    setFormState((prevState) => {
-      prevState[0].fields.push(formTypeLookup["short_text"]);
-
-      return {
-        ...prevState,
-      };
-    });
+    select: {
+      type: "select",
+      id: uuidv4(),
+      component: "select",
+      label: "",
+      hint: "",
+      placeholder: "",
+    },
   };
 
   const createElement = (element) => {
@@ -85,7 +84,8 @@ export function Builder() {
   };
 
   const handleDragEnd = (result) => {
-    console.log("RESULT", result)
+    if(!result.destination) return;
+
     const items = {...formState}
     const [reorderedItem] = items.fields.splice(result.source.index, 1)
     items.fields.splice(result.destination.index, 0, reorderedItem)
@@ -278,15 +278,3 @@ export function Builder() {
     </div>
   );
 }
-
-const Item = ({ field }) => {
-  console.log("FIELD", field);
-  return (
-    <Draggable draggableId={field.id} index={field.id}>
-      {(provided) => {
-        console.log("PROVIDED", provided);
-        return <li key={field.id}>{fieldComponentLookup[field.component]}</li>;
-      }}
-    </Draggable>
-  );
-};
